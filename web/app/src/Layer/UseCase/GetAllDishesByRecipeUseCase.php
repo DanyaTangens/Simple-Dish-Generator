@@ -53,10 +53,13 @@ class GetAllDishesByRecipeUseCase
             ));
         }
 
+        /** @var array<string,Ingredient[]> $ingredients */
         $ingredients = [];
         foreach ($ingredientTypes as $ingredientType) {
             $ingredients[$ingredientType->getCode()] = $this->getAllIngredientByTypeId->get($ingredientType->getId());
         }
+
+        $this->enoughIngredientsForRecipeOrFail($recipe, $ingredients);
 
         $this->getCombinations($products, $ingredients, $ingredientTypes, $individualRecipeIngredients);
 
@@ -65,7 +68,7 @@ class GetAllDishesByRecipeUseCase
 
     /**
      * @param Product[] $products
-     * @param Ingredient[] $ingredients
+     * @param array<string,Ingredient[]> $ingredients
      * @param IngredientType[] $ingredientTypes
      * @param string[] $individualRecipeIngredients
      * @param int $index
@@ -96,7 +99,6 @@ class GetAllDishesByRecipeUseCase
 
         $ingredientCode = $individualRecipeIngredients[$index];
 
-        /** @var Ingredient $ingredient */
         foreach ($ingredients[$ingredientCode] as $ingredient) {
             $newCombination = $combination;
             $newCombination[] = new ProductIngredient(
@@ -155,5 +157,22 @@ class GetAllDishesByRecipeUseCase
     private function hasDuplicateIngredients(string $key, array $individualRecipeIngredients): bool
     {
         return count($individualRecipeIngredients) !== count(array_unique(explode('#', $key)));
+    }
+
+    /**
+     * @param string $recipe
+     * @param array<string, Ingredient[]> $ingredients
+     * @throws Exception
+     */
+    private function enoughIngredientsForRecipeOrFail(string $recipe, array $ingredients): void
+    {
+        foreach ($ingredients as $key => $value) {
+            if (substr_count($recipe, $key) > count($value)) {
+                throw new Exception(sprintf(
+                    'Не хватает ингредиентов для типа: %s',
+                    $key
+                ));
+            }
+        }
     }
 }
