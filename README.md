@@ -7,7 +7,7 @@ Simple Dish Builder
 CLone this project
 
 ```sh
-git clone https://github.com/DanyaTangens/Simple-Dish-Generator.git
+git clone https://github.com/DanyaTangens/simple-dish-generator.git
 ```
 
 Go to the project directory :
