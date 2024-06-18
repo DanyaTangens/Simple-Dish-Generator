@@ -27,6 +27,7 @@ restart:
 
 start: init
 	@docker-compose up -d
+	@make composer-up
 	@make migrate
 
 stop:

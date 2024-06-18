@@ -15,6 +15,10 @@ $connection = DriverManager::getConnection([
 ]);
 
 $sql[] = <<<SQL
+    CREATE DATABASE IF NOT EXISTS test_task;
+SQL;
+
+$sql[] = <<<SQL
     DROP TABLE IF EXISTS test_task.ingredient;
 SQL;
 
