@@ -1,0 +1,5 @@
+type: object
+properties:
+  hello:
+    type: string
+    description: Greetings

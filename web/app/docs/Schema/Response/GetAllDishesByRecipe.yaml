@@ -1,0 +1,15 @@
+#type: object
+#properties:
+#  products:
+#    type: array
+#    items:
+#      $ref: '#/Products'
+#
+#
+#Products:
+#  type: object
+#  properties:
+#    hotel:
+#      $ref: '#/Hotel'
+#    matching_stat:
+#      $ref: '#/MatchingStat'

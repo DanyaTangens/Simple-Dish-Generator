@@ -1,0 +1,16 @@
+get:
+  tags:
+    - 'Ping'
+  operationId: "ping"
+  parameters:
+    - in: query
+      name: name
+      description: Your name
+      schema:
+        type: string
+  responses:
+    200:
+      content:
+        application/json:
+          schema:
+            $ref: '../Schema/Response/Ping.yaml'
