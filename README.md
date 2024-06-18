@@ -13,7 +13,7 @@ git clone https://github.com/DanyaTangens/simple-dish-generator.git
 Go to the project directory :
 
 ```sh
-cd Simple-Dish-Generator
+cd simple-dish-generator
 ```
 
 ## Run the application
