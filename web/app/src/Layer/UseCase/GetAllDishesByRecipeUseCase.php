@@ -60,7 +60,7 @@ class GetAllDishesByRecipeUseCase
 
         $this->getCombinations($products, $ingredients, $ingredientTypes, $individualRecipeIngredients);
 
-        return $this->filterDuplicateIngredients($products, $individualRecipeIngredients);
+        return $products;
     }
 
     /**
@@ -81,7 +81,16 @@ class GetAllDishesByRecipeUseCase
         array $combination = []
     ): void {
         if ($index == count($individualRecipeIngredients)) {
-            $products[$this->makeKey($combination)] = new Product($combination, $this->getTotalPriceByDish($combination));
+            $key = $this->makeKey($combination);
+
+            if ($this->hasDuplicateIngredients($key, $individualRecipeIngredients)) {
+                return;
+            }
+
+            if (! array_key_exists($key, $products)) {
+                $products[$this->makeKey($combination)] = new Product($combination, $this->getTotalPriceByDish($combination));
+            }
+
             return;
         }
 
@@ -114,6 +123,10 @@ class GetAllDishesByRecipeUseCase
      */
     private function makeKey(array $productIngredients): string
     {
+        usort($productIngredients, function (ProductIngredient $a, ProductIngredient $b) {
+            return $a->getIngredientId() <=> $b->getIngredientId();
+        });
+
         return implode('#', array_map(
             static fn(ProductIngredient $productIngredient): int => $productIngredient->getIngredientId(),
             $productIngredients
@@ -135,18 +148,12 @@ class GetAllDishesByRecipeUseCase
     }
 
     /**
-     * @param Product[] $products
+     * @param string $key
      * @param string[] $individualRecipeIngredients
-     * @return Product[]
+     * @return bool
      */
-    private function filterDuplicateIngredients(array $products, array $individualRecipeIngredients): array
+    private function hasDuplicateIngredients(string $key, array $individualRecipeIngredients): bool
     {
-        foreach ($products as $key => $product) {
-            if (count($individualRecipeIngredients) !== count(array_unique(explode('#', $key)))) {
-                unset($products[$key]);
-            }
-        }
-
-        return $products;
+        return count($individualRecipeIngredients) !== count(array_unique(explode('#', $key)));
     }
 }
